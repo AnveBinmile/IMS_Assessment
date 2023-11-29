@@ -5,7 +5,6 @@ const responseHandler = require("../core/responseHandler");
 const { RESPONSE_MESSAGES, RESPONSE_CODES } = require("../core/constants");
 const readInventoryService = async (req, res) => {
   const [error, data] = await to(readInventory(req.query));
-
   if (data) {
     return responseHandler({
       statusCode: RESPONSE_CODES.SUCCESS_CREATED,
@@ -27,7 +26,13 @@ const readInventoryService = async (req, res) => {
 };
 
 const createInventoryService = async (req, res) => {
+  const dateString = req.body.date;
+  const originalDate = new Date(dateString);
+  originalDate.setDate(originalDate.getDate() + 1);
+  const newDateString = originalDate.toISOString();
+  req.body.date = newDateString;
   const [error, data] = await to(createInventory(req.body));
+  console.log(newDateString);
   if (error) {
     return responseHandler({
       statusCode: RESPONSE_CODES.SUCCESS_NO_CONTENT,
